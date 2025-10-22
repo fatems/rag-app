@@ -11,7 +11,7 @@ services:
       - MONGODB_URI=mongodb://mongo:27017/rag
       - REDIS_URL=redis://redis:6379
       - CHROMA_URL=http://chromadb:8000
-      - USE_CHROMADB=true
+      - USE_CHROMADB=${USE_CHROMADB:-false}
       - PORT=3000
     ports:
       - "3000:3000"
