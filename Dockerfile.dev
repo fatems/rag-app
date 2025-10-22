@@ -1,0 +1,40 @@
+# Development Dockerfile with hot-reload
+FROM node:18-slim
+
+WORKDIR /app
+
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    curl \
+    openssl \
+    libssl3 \
+    dnsutils \
+    && update-ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create cache directory for transformers models
+RUN mkdir -p /app/.cache/huggingface
+
+# Set environment variables
+ENV NODE_ENV=development
+ENV TRANSFORMERS_CACHE=/app/.cache/huggingface
+ENV HF_HOME=/app/.cache/huggingface
+
+
+# Copy package files
+COPY package*.json ./
+
+# Install ALL dependencies (including devDependencies for nodemon, tsx, etc.) with cache
+RUN --mount=type=cache,target=/root/.npm npm ci
+
+
+# Copy source code (will be overridden by volume mount)
+COPY . .
+
+# Expose port
+EXPOSE 3000
+
+# Use tsx watch for hot-reload
+CMD ["npx", "tsx", "watch", "src/index.ts"]
+

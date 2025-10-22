@@ -1,0 +1,1 @@
+{ root:true,env:{node:true,es2021:true,jest:true},parser:@typescript-eslint/parser,parserOptions:{project:false},plugins:[@typescript-eslint],extends:[eslint:recommended,plugin:@typescript-eslint/recommended],rules:{@typescript-eslint/explicit-function-return-type:off,@typescript-eslint/no-misused-promises:error}}

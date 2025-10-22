@@ -1,0 +1,46 @@
+services:
+  app: 
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - COHERE_API_KEY=${COHERE_API_KEY}
+      - APP_URL=${APP_URL:-http://localhost:3000}
+      - HUGGINGFACE_MODEL=Xenova/all-MiniLM-L6-v2
+      - MONGODB_URI=mongodb://mongo:27017/rag
+      - REDIS_URL=redis://redis:6379
+      - CHROMA_URL=http://chromadb:8000
+      - USE_CHROMADB=${USE_CHROMADB:-false}
+      - PORT=3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/app/src
+
+      - /app/node_modules
+    depends_on:
+      - mongo
+      - redis
+      - chromadb
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+  chromadb:
+    image: chromadb/chroma:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma-data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+volumes:
+  mongo-data:
+  chroma-data:
